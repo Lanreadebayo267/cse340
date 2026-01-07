@@ -1,6 +1,59 @@
-/******* Change Box Model ***************/
-*,
-*:before,
-*:after {
-  box-sizing: border-box;
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  color: #222;
+  background-color: #f5f5f5;
+}
+
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  background: #0b3c5d;
+  color: #fff; 
+}
+
+.main-nav ul {
+  display: flex;
+  gap: 1rem;
+  list-style: none;
+  padding: 0.5rem 1rem;
+  background: #1d2731;
+}
+
+.main-nav a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.hero {
+  padding: 1rem;
+}
+
+.hero img {
+  max-width: 100%;
+}
+
+.cta-btn {
+  background: #1da1f2;
+  color: #fff;
+  border: none;
+  padding: 0.7rem 1.2rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+/* LARGE SCREENS */
+@media (min-width: 768px) {
+  .hero {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .upgrade-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
 }
