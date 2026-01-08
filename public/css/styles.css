@@ -1,59 +1,270 @@
-body {
-  font-family: Arial, Helvetica, sans-serif;
-  margin: 0;
-  color: #222;
-  background-color: #f5f5f5;
+/* ===============================
+   Root Variables and Global Styles
+==================================*/
+:root {
+  --primary-color: #004aad;   /* Deep blue accent */
+  --secondary-color: #f5f5f5; /* Light gray background */
+  --text-color: #333;         /* Dark text for readability */
+  --accent-color: #e6a100;
+  --font-family: 'Poppins', sans-serif;
 }
 
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+/* ===============================
+   Header
+==================================*/
+header,
 .site-header {
+  background-color: var(--primary-color);
+  color: #fff;
   display: flex;
   justify-content: space-between;
-  padding: 1rem;
-  background: #0b3c5d;
-  color: #fff; 
+  align-items: center;
+  padding: 1rem 2rem;
 }
 
-.main-nav ul {
+.site-header ul {
+  list-style: none;
   display: flex;
   gap: 1rem;
-  list-style: none;
-  padding: 0.5rem 1rem;
-  background: #1d2731;
 }
 
-.main-nav a {
+.site-header a {
   color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.site-header a:hover {
+  color: var(--accent-color);
+}
+
+/* ===============================
+   Header Text Styling
+==================================*/
+.site-header h1 {
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 1.8rem;
+}
+
+.site-header .account-link {
+  color: #ffffff;
+  font-weight: 700;
   text-decoration: none;
 }
 
+.site-header .account-link:hover {
+  color: var(--accent-color);
+}
+
+/* ===============================
+   Hero Section
+==================================*/
 .hero {
-  padding: 1rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  text-align: center;
+  padding: 2rem 1rem;
+  background: #eef3fa;
 }
 
 .hero img {
-  max-width: 100%;
+  width: 100%;
+  max-width: 450px;
+  margin: 1rem auto;
+  display: block;
 }
 
-.cta-btn {
-  background: #1da1f2;
+.hero h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+}
+
+.hero h2 {
+  font-size: 1.3rem;
+  color: var(--accent-color);
+  margin: 0.5rem 0;
+}
+
+.btn-primary {
+  background: var(--accent-color);
   color: #fff;
-  border: none;
-  padding: 0.7rem 1.2rem;
-  font-size: 1rem;
-  cursor: pointer;
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  display: inline-block;
+  margin-top: 1rem;
+  font-weight: 600;
+  transition: background 0.3s ease;
 }
 
-/* LARGE SCREENS */
+.btn-primary:hover {
+  background: #e69c00;
+}
+
+/* ===============================
+   Content Grid
+==================================*/
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.upgrades h3,
+.reviews h3 {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.upgrade-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.upgrade-item {
+  text-align: center;
+  background: #fff;
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.upgrade-item:hover {
+  transform: scale(1.05);
+}
+
+.upgrade-item img {
+  width: 100%;
+  max-width: 100px;
+  display: block;
+  margin: 0 auto 0.5rem;
+}
+
+.reviews ul {
+  list-style: none;
+  background: #fff;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.reviews li {
+  margin-bottom: 0.5rem;
+}
+
+/* ===============================
+   Footer
+==================================*/
+footer,
+.site-footer {
+  text-align: center;
+  padding: 1rem;
+  background: var(--primary-color);
+  color: #fff;
+  margin-top: 2rem;
+}
+
+/* ===============================
+   Responsive Design (Desktop)
+==================================*/
 @media (min-width: 768px) {
   .hero {
-    display: flex;
+    grid-template-columns: 1fr 1fr;
+    text-align: left;
     align-items: center;
-    gap: 2rem;
+    padding: 3rem;
+    background: repeating-linear-gradient(
+      45deg,
+      #eef3fa,
+      #eef3fa 20px,
+      #e0ebf7 20px,
+      #e0ebf7 40px
+    );
   }
 
-  .upgrade-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
+  .hero-text {
+    padding-right: 2rem;
   }
+
+  .content-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* =============================
+   Classification Page Styling
+============================= */
+
+/* Page container */
+main, .content-wrapper {
+  width: 90%;
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding-bottom: 3rem;
+}
+
+/* Heading */
+h1 {
+  text-align: center;
+  font-size: 2.4rem;
+  margin-bottom: 2rem;
+  color: #222;
+  font-weight: 700;
+}
+
+/* Message block (when enabled later) */
+.message {
+  background-color: #fff8e1;
+  border-left: 6px solid #ffb300;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+  color: #444;
+}
+
+/* ===============================
+   Navigation
+==================================*/
+.main-nav ul {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 0.75rem 1rem;
+  margin: 0;
+  background-color: var(--primary-color);
+}
+
+.main-nav li {
+  margin: 0;
+}
+
+.main-nav a {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.main-nav a:hover {
+  color: var(--accent-color);
 }
