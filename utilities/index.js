@@ -2,123 +2,63 @@ const invModel = require("../models/inventory-model")
 
 const utilities = {}
 
-/* ************************
- * Constructs the nav HTML unordered list
- ************************** */
-utilities.getNav = async function () {
+/* Build classification dropdown list */
+utilities.buildClassificationList = async function (classification_id = null) {
   const data = await invModel.getClassifications()
-  let list = "<ul>"
-  list += '<li><a href="/" title="Home page">Home</a></li>'
+  const rows = data?.rows || data || [] // ensure rows is always an array
 
-  data.rows.forEach((row) => {
-    list += "<li>"
-    list +=
-      '<a href="/inv/type/' +
-      row.classification_id +
-      '" title="See our inventory of ' +
-      row.classification_name +
-      ' vehicles">' +
-      row.classification_name +
-      "</a>"
-    list += "</li>"
+  let classificationList =
+    '<select name="classification_id" id="classificationList" required>'
+  classificationList += "<option value=''>Choose a Classification</option>"
+
+  rows.forEach((row) => {
+    classificationList += `<option value="${row.classification_id}"`
+    if (classification_id != null && row.classification_id == classification_id) {
+      classificationList += " selected"
+    }
+    classificationList += `>${row.classification_name}</option>`
   })
 
-  list += "</ul>"
-  return list
+  classificationList += "</select>"
+  return classificationList
 }
 
-/* **************************************
- * Build the classification view HTML
- * ************************************ */
-utilities.buildClassificationGrid = async function (data) {
-  let grid
+/* Build nav */
+utilities.getNav = async function () {
+  const data = await invModel.getClassifications()
+  const rows = data?.rows || data || []
 
-  if (data.length > 0) {
-    grid = '<ul id="inv-display">'
+  let nav = "<ul>"
+  rows.forEach((row) => {
+    nav += `<li><a href='/inv/type/${row.classification_id}'>${row.classification_name}</a></li>`
+  })
+  nav += "</ul>"
+  return nav
+}
 
-    data.forEach((vehicle) => {
-      grid += "<li>"
-      // Absolute path for image link
-      grid +=
-        '<a href="/inv/detail/' +
-        vehicle.inv_id +
-        '" title="View ' +
-        vehicle.inv_make +
-        " " +
-        vehicle.inv_model +
-        ' details"><img src="' +
-        vehicle.inv_thumbnail +
-        '" alt="Image of ' +
-        vehicle.inv_make +
-        " " +
-        vehicle.inv_model +
-        ' on CSE Motors" /></a>'
-
-      grid += '<div class="namePrice">'
-      grid += "<hr />"
-      grid += "<h2>"
-      // Absolute path for name link
-      grid +=
-        '<a href="/inv/detail/' +
-        vehicle.inv_id +
-        '" title="View ' +
-        vehicle.inv_make +
-        " " +
-        vehicle.inv_model +
-        ' details">' +
-        vehicle.inv_make +
-        " " +
-        vehicle.inv_model +
-        "</a>"
-      grid += "</h2>"
-
-      grid +=
-        "<span>$" +
-        new Intl.NumberFormat("en-US").format(vehicle.inv_price) +
-        "</span>"
-      grid += "</div>"
-      grid += "</li>"
-    })
-
-    grid += "</ul>"
-  } else {
-    grid = '<p class="notice">Sorry, no matching vehicles could be found.</p>'
+/* ***************************
+ * Async error handler wrapper
+ * Wrap async route handlers so errors go to Express error handler
+ ***************************/
+utilities.handleErrors = (fn) => {
+  return async (req, res, next) => {
+    try {
+      await fn(req, res, next)
+    } catch (err) {
+      next(err)
+    }
   }
+}
 
+utilities.buildClassificationGrid = function(data) {
+  if (!data || data.length === 0) return "<p>No vehicles to display.</p>"
+
+  let grid = "<ul class='vehicle-grid'>"
+  data.forEach(vehicle => {
+    grid += `<li>${vehicle.inv_make} ${vehicle.inv_model} - $${vehicle.inv_price}</li>`
+  })
+  grid += "</ul>"
   return grid
 }
-
-utilities.buildVehicleDetail = function (vehicle) {
-  const price = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD"
-  }).format(vehicle.inv_price)
-
-  const miles = vehicle.inv_miles.toLocaleString()
-
-  return `
-    <section class="vehicle-detail">
-      <div class="vehicle-image">
-        <img src="${vehicle.inv_image}" alt="Image of ${vehicle.inv_make} ${vehicle.inv_model}">
-      </div>
-
-      <div class="vehicle-info">
-        <h2>${vehicle.inv_make} ${vehicle.inv_model} (${vehicle.inv_year})</h2>
-        <p class="vehicle-price"><strong>Price:</strong> ${price}</p>
-        <p><strong>Mileage:</strong> ${miles} miles</p>
-        <p><strong>Description:</strong> ${vehicle.inv_description}</p>
-        <p><strong>Color:</strong> ${vehicle.inv_color}</p>
-      </div>
-    </section>
-  `
-}
-
-/* ****************************************
- * Middleware For Handling Errors
- * Wrap other function in this for
- * General Error Handling
- * ************************************** */
-utilities.handleErrors = fn => (req, res, next) =>
-  Promise.resolve(fn(req, res, next)).catch(next)
 
 module.exports = utilities

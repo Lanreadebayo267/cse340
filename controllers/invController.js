@@ -3,32 +3,31 @@ const utilities = require("../utilities")
 
 const invCont = {}
 
-/* ***************************
- *  Build inventory by classification view
- * ************************** */
+/* Build inventory by classification view */
 invCont.buildByClassificationId = async function (req, res, next) {
   try {
-    const classification_id = req.params.classificationId
+    const classification_id = parseInt(req.params.classificationId)
     const data = await invModel.getInventoryByClassificationId(classification_id)
-
-    const grid = await utilities.buildClassificationGrid(data)
     const nav = await utilities.getNav()
 
-    // Determine classification name safely
-    const className =
-      data.length > 0 ? data[0].classification_name : "No Vehicles Found"
+    let grid = "<p>No vehicles found for this classification.</p>"
+    if (data && data.length > 0) {
+      grid = await utilities.buildClassificationGrid(data)
+    }
 
-    res.render("./inventory/classification", {
-      title: className + " vehicles",
+    const className = data.length > 0 ? data[0].classification_name : "No Vehicles Found"
+
+    res.render("inventory/classification", {
+      title: `${className} vehicles`,
       nav,
       grid,
     })
   } catch (err) {
-    // Pass any errors to Express error handler
     next(err)
   }
 }
 
+/* Build inventory detail view */
 invCont.buildInventoryDetail = async function (req, res, next) {
   try {
     const inv_id = parseInt(req.params.inv_id)
@@ -46,8 +45,119 @@ invCont.buildInventoryDetail = async function (req, res, next) {
       nav,
       vehicleHTML
     })
-  } catch (error) {
-    next(error)
+  } catch (err) {
+    next(err)
+  }
+}
+
+/* Inventory Management view */
+invCont.buildManagementView = async function (req, res, next) {
+  try {
+    const nav = await utilities.getNav()
+    const message = req.flash("message") || ""
+    res.render("inventory/management", {
+      title: "Inventory Management",
+      nav,
+      message
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+
+/* Show Add Classification Form */
+invCont.buildAddClassificationView = async function (req, res, next) {
+  try {
+    const nav = await utilities.getNav()
+    const message = req.flash("message") || ""
+    res.render("inventory/add-classification", {
+      title: "Add New Classification",
+      nav,
+      message
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+
+/* Process Add Classification */
+invCont.addClassification = async function (req, res, next) {
+  try {
+    const { classification_name } = req.body
+
+    if (!classification_name || !/^[a-zA-Z0-9]+$/.test(classification_name)) {
+      req.flash("message", "Classification name can only contain letters and numbers")
+      return res.redirect("/inv/add-classification")
+    }
+
+    const result = await invModel.addClassification(classification_name)
+    if (result.rowCount > 0) {
+      req.flash("message", `Successfully added classification: ${classification_name}`)
+      return res.redirect("/inv/")
+    } else {
+      req.flash("message", "Failed to add classification")
+      return res.redirect("/inv/add-classification")
+    }
+  } catch (err) {
+    next(err)
+  }
+}
+
+/* Show Add Inventory Form */
+invCont.buildAddInventory = async function (req, res, next) {
+  try {
+    const nav = await utilities.getNav()
+    const classifications = await utilities.buildClassificationList()
+
+    res.render("inventory/add-inventory", {
+      title: "Add New Inventory Item",
+      nav,
+      classifications,
+      errors: null
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+
+/* Process Add Inventory Form */
+invCont.addInventory = async function (req, res, next) {
+  try {
+    const {
+      classification_id,
+      inv_make,
+      inv_model,
+      inv_year,
+      inv_description,
+      inv_image,
+      inv_thumbnail,
+      inv_price,
+      inv_miles,
+      inv_color
+    } = req.body
+
+    const result = await invModel.addInventory(
+      classification_id,
+      inv_make,
+      inv_model,
+      inv_year,
+      inv_description,
+      inv_image,
+      inv_thumbnail,
+      inv_price,
+      inv_miles,
+      inv_color
+    )
+
+    if (result) {
+      req.flash("message", "Inventory item added successfully")
+      res.redirect("/inv/")
+    } else {
+      req.flash("message", "Failed to add inventory item")
+      res.redirect("/inv/add-inventory")
+    }
+  } catch (err) {
+    next(err)
   }
 }
 

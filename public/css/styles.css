@@ -290,3 +290,88 @@ h1 {
     align-items: flex-start;
   }
 }
+
+.login-container {
+  max-width: 420px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background: #ffffff;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.login-container h1 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-form label {
+  margin-top: 1rem;
+  font-weight: 600;
+}
+
+.login-form input {
+  padding: 0.6rem;
+  margin-top: 0.3rem;
+  font-size: 1rem;
+}
+
+.login-form button {
+  margin-top: 1.5rem;
+  padding: 0.7rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.flash-message {
+  background-color: #ffe0e0;
+  color: #900;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.register-link {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.password-rules {
+  font-size: 0.85rem;
+  margin-top: 0.75rem;
+  color: #555;
+}
+
+.password-rules {
+  font-size: 0.85rem;
+  margin-top: 0.75rem;
+  color: #555;
+}
+
+/* Invalid inputs */
+input:required:invalid,
+input:focus:invalid {
+  border: 2px solid red;
+  background-color: #ffe6e6; /* light red background for visibility */
+}
+
+/* Valid inputs */
+input:required:valid {
+  border: 2px solid green;
+  background-color: #e6ffe6; /* light green background */
+}
+
+/* Optional: style the password rules */
+.password-rules {
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}

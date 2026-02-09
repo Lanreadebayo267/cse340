@@ -1,22 +1,21 @@
-// Needed Resources 
 const express = require("express")
-const router = new express.Router() 
+const router = express.Router()
 const invController = require("../controllers/invController")
 const utilities = require("../utilities")
 
-// Route to build inventory by classification view
-router.get("/type/:classificationId", invController.buildByClassificationId);
+// Inventory routes
+router.get("/type/:classificationId", utilities.handleErrors(invController.buildByClassificationId))
+router.get("/detail/:inv_id", utilities.handleErrors(invController.buildInventoryDetail))
 
-// Adding Detail Route
-router.get(
-    "/detail/:inv_id",
-    utilities.handleErrors(invController.buildInventoryDetail)
-)
+// Management view
+router.get("/", utilities.handleErrors(invController.buildManagementView))
 
-// Intentional error route
-router.get("/trigger-error", (req, res, next) => {
-  // This will intentionally throw an error
-  next(new Error("This is a forced 500 error for testing"))
-})
+// Add Classification
+router.get("/add-classification", utilities.handleErrors(invController.buildAddClassificationView))
+router.post("/add-classification", utilities.handleErrors(invController.addClassification))
 
-module.exports = router;
+// Add Inventory
+router.get("/add-inventory", utilities.handleErrors(invController.buildAddInventory))
+router.post("/add-inventory", utilities.handleErrors(invController.addInventory))
+
+module.exports = router
