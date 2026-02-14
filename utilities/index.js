@@ -1,4 +1,6 @@
 const invModel = require("../models/inventory-model")
+const jwt = require("jsonwebtoken")
+require("dotenv").config()
 
 const utilities = {}
 
@@ -61,4 +63,53 @@ utilities.buildClassificationGrid = function(data) {
   return grid
 }
 
+utilities.checkJWTToken = (req, res, next) => {
+  const token = req.cookies.jwt
+  console.log("Incoming JWT:", token)
+
+  if (token) {
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, accountData) => {
+      if (err) {
+        console.log("JWT verification failed:", err.message)
+        res.clearCookie("jwt")
+        return res.redirect("/account/login")
+      }
+      console.log("JWT verified:", accountData)
+      res.locals.accountData = accountData
+      res.locals.loggedin = true
+      next()
+    })
+  } else {
+    console.log("No JWT cookie found")
+    res.locals.loggedin = false
+    next()
+  }
+}
+
+utilities.checkEmployeeOrAdmin = (req, res, next) => {
+  if (
+    res.locals.loggedin &&
+    (res.locals.accountData.account_type === "Employee" ||
+      res.locals.accountData.account_type === "Admin")
+  ) {
+    // User is allowed
+    return next()
+  }
+
+  // User not allowed
+  req.flash("notice", "You must be logged in as an employee or admin to access this page.")
+  return res.redirect("/account/login")
+}
+
+/* ****************************************
+ * Check Login
+ * ************************************* */
+ utilities.checkLogin = (req, res, next) => {
+  if (res.locals.loggedin) {
+    next()
+  } else {
+    req.flash("notice", "Please log in.")
+    return res.redirect("/account/login")
+  }
+ }
 module.exports = utilities

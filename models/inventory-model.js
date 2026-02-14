@@ -106,4 +106,16 @@ invModel.addInventory = async function (
   }
 }
 
+/* Delete inventory item */
+invModel.deleteInventoryItem = async function (inv_id) {
+  try {
+    const sql = "DELETE FROM inventory WHERE inv_id = $1"
+    const data = await pool.query(sql, [inv_id])
+    return data
+  } catch (error) {
+    console.error("deleteInventoryItem error:", error)
+    throw error
+  }
+}
+
 module.exports = invModel
