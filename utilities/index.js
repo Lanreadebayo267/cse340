@@ -52,14 +52,36 @@ utilities.handleErrors = (fn) => {
   }
 }
 
-utilities.buildClassificationGrid = function(data) {
-  if (!data || data.length === 0) return "<p>No vehicles to display.</p>"
+utilities.buildClassificationGrid = async function (data) {
+  let grid = ""
 
-  let grid = "<ul class='vehicle-grid'>"
-  data.forEach(vehicle => {
-    grid += `<li>${vehicle.inv_make} ${vehicle.inv_model} - $${vehicle.inv_price}</li>`
-  })
-  grid += "</ul>"
+  if (data.length > 0) {
+    grid += '<ul id="inv-display">'
+    data.forEach(vehicle => {
+      grid += "<li>"
+      grid += '<a href="/inv/detail/' + vehicle.inv_id + '" title="View ' 
+        + vehicle.inv_make + " " + vehicle.inv_model + ' details">'
+      grid += '<img src="' + vehicle.inv_thumbnail + '" alt="Image of ' 
+        + vehicle.inv_make + " " + vehicle.inv_model + ' on CSE Motors">'
+      grid += "</a>"
+      grid += "<div class='namePrice'>"
+      grid += "<hr>"
+      grid += "<h2>"
+      grid += '<a href="/inv/detail/' + vehicle.inv_id + '" title="View ' 
+        + vehicle.inv_make + " " + vehicle.inv_model + ' details">'
+        + vehicle.inv_make + " " + vehicle.inv_model + "</a>"
+      grid += "</h2>"
+      grid += "<span>$"
+        + new Intl.NumberFormat('en-US').format(vehicle.inv_price)
+        + "</span>"
+      grid += "</div>"
+      grid += "</li>"
+    })
+    grid += "</ul>"
+  } else {
+    grid += "<p class='notice'>Sorry, no matching vehicles could be found.</p>"
+  }
+
   return grid
 }
 
